@@ -10,10 +10,10 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/nsqio/go-diskqueue"
-	"github.com/nsqio/nsq/internal/lg"
-	"github.com/nsqio/nsq/internal/pqueue"
-	"github.com/nsqio/nsq/internal/quantile"
+	"github.com/TianZhH/go-diskqueue"
+	"github.com/TianZhH/nsq/internal/lg"
+	"github.com/TianZhH/nsq/internal/pqueue"
+	"github.com/TianZhH/nsq/internal/quantile"
 )
 
 type Consumer interface {
@@ -307,9 +307,9 @@ func (c *Channel) put(m *Message) error {
 	select {
 	case c.memoryMsgChan <- m:
 	default:
-		b := bufferPoolGet()
-		err := writeMessageToBackend(b, m, c.backend)
-		bufferPoolPut(b)
+		b := bufferPoolGet()	// 从 buffer pool 获取一个 buffer， bufferPool 为 sync.pool
+		err := writeMessageToBackend(b, m, c.backend)	// 将 msg 写入到 backend
+		bufferPoolPut(b)		// 将 buf 返还给 pool
 		c.ctx.nsqd.SetHealth(err)
 		if err != nil {
 			c.ctx.nsqd.logf(LOG_ERROR, "CHANNEL(%s): failed to write message to backend - %s",
@@ -531,7 +531,7 @@ func (c *Channel) addToDeferredPQ(item *pqueue.Item) {
 	c.deferredMutex.Unlock()
 }
 
-func (c *Channel) processDeferredQueue(t int64) bool {
+func (c *Channel) processDeferredQueue(t int64) bool {	// 处理 deferred 队列消息
 	c.exitMutex.RLock()
 	defer c.exitMutex.RUnlock()
 
@@ -551,7 +551,7 @@ func (c *Channel) processDeferredQueue(t int64) bool {
 		dirty = true
 
 		msg := item.Value.(*Message)
-		_, err := c.popDeferredMessage(msg.ID)
+		_, err := c.popDeferredMessage(msg.ID)	// 从 c 的 deferred map 中判断 msg 是否合法，并从 deferred map 中删除 msg
 		if err != nil {
 			goto exit
 		}
@@ -562,37 +562,37 @@ exit:
 	return dirty
 }
 
-func (c *Channel) processInFlightQueue(t int64) bool {
+func (c *Channel) processInFlightQueue(t int64) bool {	// 处理 in-flight 队列消息
 	c.exitMutex.RLock()
 	defer c.exitMutex.RUnlock()
 
-	if c.Exiting() {
+	if c.Exiting() {	// 如果 channel 正在退出或已经退出(因为 channel.exit()设置 exitFlag 标记后还执行了一段逻辑，所以 exitFlag=1 至少表明 channel 正在退出)则直接返回
 		return false
 	}
 
 	dirty := false
 	for {
 		c.inFlightMutex.Lock()
-		msg, _ := c.inFlightPQ.PeekAndShift(t)
+		msg, _ := c.inFlightPQ.PeekAndShift(t)	// 判断 in-flight 堆顶元素 pri 是否 > t ，是则返回堆顶 msg
 		c.inFlightMutex.Unlock()
 
 		if msg == nil {
 			goto exit
 		}
-		dirty = true
+		dirty = true	// dirty = true 表明有消息要处理
 
-		_, err := c.popInFlightMessage(msg.clientID, msg.ID)
+		_, err := c.popInFlightMessage(msg.clientID, msg.ID)	// 从 in-flight map 中判断 msg 是否合法，并从 in-flight map 中删除 msg
 		if err != nil {
 			goto exit
 		}
-		atomic.AddUint64(&c.timeoutCount, 1)
+		atomic.AddUint64(&c.timeoutCount, 1)// TODO
 		c.RLock()
 		client, ok := c.clients[msg.clientID]
 		c.RUnlock()
 		if ok {
-			client.TimedOutMessage()
+			client.TimedOutMessage()	// TODO
 		}
-		c.put(msg)
+		c.put(msg)	// 将 msg 写入到 channel 的 memoryMsgChan 中，即内存中，但 channel 的 memoryMsgChan 有长度限制，因此如果已满 则写入到 channel 的 backend，让 channel 的 backend 去处理这个msg
 	}
 
 exit:

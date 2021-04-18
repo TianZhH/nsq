@@ -1,0 +1,432 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="7b2d9d2c-f202-48ad-a550-97fe5838e587" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/apps/nsq_stat/nsq_stat.go" beforeDir="false" afterPath="$PROJECT_DIR$/apps/nsq_stat/nsq_stat.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/nsq_tail/nsq_tail.go" beforeDir="false" afterPath="$PROJECT_DIR$/apps/nsq_tail/nsq_tail.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/nsq_to_file/file_logger.go" beforeDir="false" afterPath="$PROJECT_DIR$/apps/nsq_to_file/file_logger.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/nsq_to_file/nsq_to_file.go" beforeDir="false" afterPath="$PROJECT_DIR$/apps/nsq_to_file/nsq_to_file.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/nsq_to_file/topic_discoverer.go" beforeDir="false" afterPath="$PROJECT_DIR$/apps/nsq_to_file/topic_discoverer.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/nsq_to_http/http.go" beforeDir="false" afterPath="$PROJECT_DIR$/apps/nsq_to_http/http.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/nsq_to_http/nsq_to_http.go" beforeDir="false" afterPath="$PROJECT_DIR$/apps/nsq_to_http/nsq_to_http.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/nsq_to_nsq/nsq_to_nsq.go" beforeDir="false" afterPath="$PROJECT_DIR$/apps/nsq_to_nsq/nsq_to_nsq.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/nsqadmin/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/apps/nsqadmin/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/nsqd/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/apps/nsqd/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/nsqd/main_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/apps/nsqd/main_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/nsqd/options.go" beforeDir="false" afterPath="$PROJECT_DIR$/apps/nsqd/options.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/nsqlookupd/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/apps/nsqlookupd/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/to_nsq/to_nsq.go" beforeDir="false" afterPath="$PROJECT_DIR$/apps/to_nsq/to_nsq.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bench/bench_channels/bench_channels.go" beforeDir="false" afterPath="$PROJECT_DIR$/bench/bench_channels/bench_channels.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bench/bench_reader/bench_reader.go" beforeDir="false" afterPath="$PROJECT_DIR$/bench/bench_reader/bench_reader.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bench/bench_writer/bench_writer.go" beforeDir="false" afterPath="$PROJECT_DIR$/bench/bench_writer/bench_writer.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/auth/authorizations.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/auth/authorizations.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/clusterinfo/data.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/clusterinfo/data.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/clusterinfo/types.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/clusterinfo/types.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/http_api/api_response.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/http_api/api_response.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/http_api/http_server.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/http_api/http_server.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/http_api/topic_channel_args.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/http_api/topic_channel_args.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/lg/lg_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/lg/lg_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/protocol/tcp_server.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/protocol/tcp_server.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/quantile/quantile.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/quantile/quantile.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/util/util_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/util/util_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nsqadmin/http.go" beforeDir="false" afterPath="$PROJECT_DIR$/nsqadmin/http.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nsqadmin/http_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/nsqadmin/http_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nsqadmin/logger.go" beforeDir="false" afterPath="$PROJECT_DIR$/nsqadmin/logger.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nsqadmin/nsqadmin.go" beforeDir="false" afterPath="$PROJECT_DIR$/nsqadmin/nsqadmin.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nsqadmin/nsqadmin_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/nsqadmin/nsqadmin_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nsqadmin/options.go" beforeDir="false" afterPath="$PROJECT_DIR$/nsqadmin/options.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nsqd/channel.go" beforeDir="false" afterPath="$PROJECT_DIR$/nsqd/channel.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nsqd/channel_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/nsqd/channel_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nsqd/client_v2.go" beforeDir="false" afterPath="$PROJECT_DIR$/nsqd/client_v2.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nsqd/http.go" beforeDir="false" afterPath="$PROJECT_DIR$/nsqd/http.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nsqd/http_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/nsqd/http_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nsqd/in_flight_pqueue.go" beforeDir="false" afterPath="$PROJECT_DIR$/nsqd/in_flight_pqueue.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nsqd/in_flight_pqueue_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/nsqd/in_flight_pqueue_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nsqd/logger.go" beforeDir="false" afterPath="$PROJECT_DIR$/nsqd/logger.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nsqd/lookup.go" beforeDir="false" afterPath="$PROJECT_DIR$/nsqd/lookup.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nsqd/lookup_peer.go" beforeDir="false" afterPath="$PROJECT_DIR$/nsqd/lookup_peer.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nsqd/message.go" beforeDir="false" afterPath="$PROJECT_DIR$/nsqd/message.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nsqd/nsqd.go" beforeDir="false" afterPath="$PROJECT_DIR$/nsqd/nsqd.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nsqd/nsqd_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/nsqd/nsqd_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nsqd/options.go" beforeDir="false" afterPath="$PROJECT_DIR$/nsqd/options.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nsqd/protocol_v2.go" beforeDir="false" afterPath="$PROJECT_DIR$/nsqd/protocol_v2.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nsqd/protocol_v2_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/nsqd/protocol_v2_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nsqd/stats.go" beforeDir="false" afterPath="$PROJECT_DIR$/nsqd/stats.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nsqd/stats_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/nsqd/stats_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nsqd/statsd.go" beforeDir="false" afterPath="$PROJECT_DIR$/nsqd/statsd.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nsqd/tcp.go" beforeDir="false" afterPath="$PROJECT_DIR$/nsqd/tcp.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nsqd/topic.go" beforeDir="false" afterPath="$PROJECT_DIR$/nsqd/topic.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nsqd/topic_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/nsqd/topic_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nsqlookupd/http.go" beforeDir="false" afterPath="$PROJECT_DIR$/nsqlookupd/http.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nsqlookupd/http_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/nsqlookupd/http_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nsqlookupd/logger.go" beforeDir="false" afterPath="$PROJECT_DIR$/nsqlookupd/logger.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nsqlookupd/lookup_protocol_v1.go" beforeDir="false" afterPath="$PROJECT_DIR$/nsqlookupd/lookup_protocol_v1.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nsqlookupd/lookup_protocol_v1_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/nsqlookupd/lookup_protocol_v1_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nsqlookupd/nsqlookupd.go" beforeDir="false" afterPath="$PROJECT_DIR$/nsqlookupd/nsqlookupd.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nsqlookupd/nsqlookupd_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/nsqlookupd/nsqlookupd_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nsqlookupd/options.go" beforeDir="false" afterPath="$PROJECT_DIR$/nsqlookupd/options.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nsqlookupd/registration_db_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/nsqlookupd/registration_db_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nsqlookupd/tcp.go" beforeDir="false" afterPath="$PROJECT_DIR$/nsqlookupd/tcp.go" afterDir="false" />
+    </list>
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/nsqd/nsqd.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="552">
+              <caret line="627" column="32" selection-start-line="627" selection-start-column="32" selection-end-line="627" selection-end-column="32" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://E:/go/src/builtin/builtin.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="290">
+              <caret line="17" column="4" selection-start-line="17" selection-start-column="4" selection-end-line="17" selection-end-column="4" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/nsqd/channel.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="272">
+              <caret line="496" column="17" selection-start-line="496" selection-start-column="17" selection-end-line="496" selection-end-column="17" />
+              <folding>
+                <element signature="e#14#271#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/internal/pqueue/pqueue.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="812">
+              <caret line="62" column="25" selection-start-line="62" selection-start-column="25" selection-end-line="62" selection-end-column="25" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/nsqd/protocol_v2.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="776">
+              <caret line="617" column="49" lean-forward="true" selection-start-line="617" selection-start-column="49" selection-end-line="617" selection-end-column="49" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/nsqd/client_v2.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="272">
+              <caret line="368" column="34" selection-start-line="368" selection-start-column="19" selection-end-line="368" selection-end-column="34" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/nsqd/buffer_pool.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="216">
+              <caret line="15" column="13" lean-forward="true" selection-start-line="15" selection-start-column="13" selection-end-line="15" selection-end-column="13" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/nsqd/in_flight_pqueue.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="336">
+              <caret line="51" column="30" selection-start-line="51" selection-start-column="30" selection-end-line="51" selection-end-column="30" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/nsqd/message.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="596">
+              <caret line="92" column="5" selection-start-line="92" selection-start-column="5" selection-end-line="92" selection-end-column="5" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/nsqd/backend_queue.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="90">
+              <caret line="5" column="4" selection-start-line="5" selection-start-column="4" selection-end-line="5" selection-end-column="4" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>&quot;github.com/nsqio</find>
+      <find>Perm(n int)</find>
+      <find>TimedOutMessage</find>
+    </findStrings>
+    <replaceStrings>
+      <replace>&quot;github.com/TianZhH</replace>
+    </replaceStrings>
+    <dirStrings>
+      <dir>E:\golang\src\github.com\TianZhH\nsq</dir>
+    </dirStrings>
+  </component>
+  <component name="GOROOT" path="E:\Go" />
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GoLibraries">
+    <option name="indexEntireGoPath" value="false" />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/apps/nsqd/main.go" />
+        <option value="$PROJECT_DIR$/internal/util/rand.go" />
+        <option value="$PROJECT_DIR$/nsqd/message.go" />
+        <option value="$PROJECT_DIR$/nsqd/nsqd.go" />
+        <option value="$PROJECT_DIR$/nsqd/channel.go" />
+        <option value="$PROJECT_DIR$/nsqd/in_flight_pqueue.go" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="-8" />
+    <option name="y" value="-8" />
+    <option name="width" value="1936" />
+    <option name="height" value="1056" />
+  </component>
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="1" id="Add" />
+  </component>
+  <component name="ProjectView">
+    <navigator proportions="" version="1">
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="nsq" type="b2602c69:ProjectViewProjectNode" />
+              <item name="nsq" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="nsq" type="b2602c69:ProjectViewProjectNode" />
+              <item name="nsq" type="462c0819:PsiDirectoryNode" />
+              <item name="apps" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="nsq" type="b2602c69:ProjectViewProjectNode" />
+              <item name="nsq" type="462c0819:PsiDirectoryNode" />
+              <item name="apps" type="462c0819:PsiDirectoryNode" />
+              <item name="nsqd" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="nsq" type="b2602c69:ProjectViewProjectNode" />
+              <item name="nsq" type="462c0819:PsiDirectoryNode" />
+              <item name="nsqd" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="nsq" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="Scope" />
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="go.gopath.indexing.explicitly.defined" value="true" />
+    <property name="go.sdk.automatically.set" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
+    <property name="nodejs_npm_path_reset_for_default_project" value="true" />
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
+    <editor active="true" />
+    <layout>
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.2553305" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Run" order="2" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Database Changes" order="8" />
+      <window_info anchor="bottom" id="Version Control" order="9" />
+      <window_info anchor="bottom" id="Terminal" order="10" />
+      <window_info anchor="bottom" id="Event Log" order="11" side_tool="true" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="right" id="Database" order="3" />
+    </layout>
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://E:/go/src/time/tick.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="360">
+          <caret line="20" column="5" selection-start-line="20" selection-start-column="5" selection-end-line="20" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://E:/go/src/time/sleep.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="684">
+          <caret line="38" column="5" selection-start-line="38" selection-start-column="5" selection-end-line="38" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://E:/go/src/math/rand/rand.go">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/internal/util/rand.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="72">
+          <caret line="6" column="5" selection-start-line="6" selection-start-column="5" selection-end-line="6" selection-end-column="5" />
+          <folding>
+            <element signature="e#14#37#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nsqd/options.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="522">
+          <caret line="39" column="4" selection-start-line="39" selection-start-column="4" selection-end-line="39" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/apps/nsqd/main.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="380">
+          <caret line="80" column="24" selection-start-line="80" selection-start-column="24" selection-end-line="80" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nsqd/stats.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="452">
+          <caret line="68" column="44" selection-start-line="68" selection-start-column="44" selection-end-line="68" selection-end-column="44" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://E:/go/src/bytes/buffer.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="290">
+          <caret line="96" column="17" selection-start-line="96" selection-start-column="17" selection-end-line="96" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nsqd/buffer_pool.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="216">
+          <caret line="15" column="13" lean-forward="true" selection-start-line="15" selection-start-column="13" selection-end-line="15" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nsqd/backend_queue.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="5" column="4" selection-start-line="5" selection-start-column="4" selection-end-line="5" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nsqd/message.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="596">
+          <caret line="92" column="5" selection-start-line="92" selection-start-column="5" selection-end-line="92" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nsqd/client_v2.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="272">
+          <caret line="368" column="34" selection-start-line="368" selection-start-column="19" selection-end-line="368" selection-end-column="34" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nsqd/protocol_v2.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="776">
+          <caret line="617" column="49" lean-forward="true" selection-start-line="617" selection-start-column="49" selection-end-line="617" selection-end-column="49" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/internal/pqueue/pqueue.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="812">
+          <caret line="62" column="25" selection-start-line="62" selection-start-column="25" selection-end-line="62" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://E:/go/src/builtin/builtin.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="290">
+          <caret line="17" column="4" selection-start-line="17" selection-start-column="4" selection-end-line="17" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nsqd/nsqd.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="552">
+          <caret line="627" column="32" selection-start-line="627" selection-start-column="32" selection-end-line="627" selection-end-column="32" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nsqd/channel.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="272">
+          <caret line="496" column="17" selection-start-line="496" selection-start-column="17" selection-end-line="496" selection-end-column="17" />
+          <folding>
+            <element signature="e#14#271#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nsqd/in_flight_pqueue.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="336">
+          <caret line="51" column="30" selection-start-line="51" selection-start-column="30" selection-end-line="51" selection-end-column="30" />
+        </state>
+      </provider>
+    </entry>
+  </component>
+</project>

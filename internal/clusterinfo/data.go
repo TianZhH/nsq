@@ -10,9 +10,9 @@ import (
 	"sync"
 
 	"github.com/blang/semver"
-	"github.com/nsqio/nsq/internal/http_api"
-	"github.com/nsqio/nsq/internal/lg"
-	"github.com/nsqio/nsq/internal/stringy"
+	"github.com/TianZhH/nsq/internal/http_api"
+	"github.com/TianZhH/nsq/internal/lg"
+	"github.com/TianZhH/nsq/internal/stringy"
 )
 
 type PartialErr interface {

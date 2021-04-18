@@ -12,10 +12,10 @@ import (
 	"time"
 
 	"github.com/mreiferson/go-options"
-	"github.com/nsqio/go-nsq"
-	"github.com/nsqio/nsq/internal/app"
-	"github.com/nsqio/nsq/internal/lg"
-	"github.com/nsqio/nsq/internal/version"
+	"github.com/TianZhH/go-nsq"
+	"github.com/TianZhH/nsq/internal/app"
+	"github.com/TianZhH/nsq/internal/lg"
+	"github.com/TianZhH/nsq/internal/version"
 )
 
 func hasArg(s string) bool {

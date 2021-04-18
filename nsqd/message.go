@@ -91,7 +91,7 @@ func decodeMessage(b []byte) (*Message, error) {
 }
 
 func writeMessageToBackend(buf *bytes.Buffer, msg *Message, bq BackendQueue) error {
-	buf.Reset()
+	buf.Reset()	// buf 是从 sync.pool 结构获取到的 因此需要 reset 一下才能使用
 	_, err := msg.WriteTo(buf)
 	if err != nil {
 		return err

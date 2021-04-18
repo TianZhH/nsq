@@ -8,7 +8,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/nsqio/go-nsq"
+	"github.com/TianZhH/go-nsq"
 )
 
 var (

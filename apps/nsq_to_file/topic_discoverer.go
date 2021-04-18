@@ -6,10 +6,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/nsqio/go-nsq"
-	"github.com/nsqio/nsq/internal/clusterinfo"
-	"github.com/nsqio/nsq/internal/http_api"
-	"github.com/nsqio/nsq/internal/lg"
+	"github.com/TianZhH/go-nsq"
+	"github.com/TianZhH/nsq/internal/clusterinfo"
+	"github.com/TianZhH/nsq/internal/http_api"
+	"github.com/TianZhH/nsq/internal/lg"
 )
 
 type TopicDiscoverer struct {

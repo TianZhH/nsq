@@ -17,13 +17,13 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/nsqio/nsq/internal/clusterinfo"
-	"github.com/nsqio/nsq/internal/dirlock"
-	"github.com/nsqio/nsq/internal/http_api"
-	"github.com/nsqio/nsq/internal/protocol"
-	"github.com/nsqio/nsq/internal/statsd"
-	"github.com/nsqio/nsq/internal/util"
-	"github.com/nsqio/nsq/internal/version"
+	"github.com/TianZhH/nsq/internal/clusterinfo"
+	"github.com/TianZhH/nsq/internal/dirlock"
+	"github.com/TianZhH/nsq/internal/http_api"
+	"github.com/TianZhH/nsq/internal/protocol"
+	"github.com/TianZhH/nsq/internal/statsd"
+	"github.com/TianZhH/nsq/internal/util"
+	"github.com/TianZhH/nsq/internal/version"
 )
 
 const (
@@ -451,7 +451,7 @@ func (n *NSQD) Exit() {
 	n.Unlock()
 
 	n.logf(LOG_INFO, "NSQ: stopping subsystems")
-	close(n.exitChan)
+	close(n.exitChan)	// NSQ 通过 关闭 chan 来通知监听此 chan 的 goroutine 退出
 	n.waitGroup.Wait()
 	n.dl.Unlock()
 	n.logf(LOG_INFO, "NSQ: bye")
@@ -574,7 +574,7 @@ func (n *NSQD) Notify(v interface{}) {
 	})
 }
 
-// channels returns a flat slice of all channels in all topics
+// channels returns a flat slice of all channels in all topics 获取所有 topic 中的所有 channel
 func (n *NSQD) channels() []*Channel {
 	var channels []*Channel
 	n.RLock()
@@ -592,9 +592,9 @@ func (n *NSQD) channels() []*Channel {
 // resizePool adjusts the size of the pool of queueScanWorker goroutines
 //
 // 	1 <= pool <= min(num * 0.25, QueueScanWorkerPoolMax)
-//
+// 重置 pool 中 goroutine 个数
 func (n *NSQD) resizePool(num int, workCh chan *Channel, responseCh chan bool, closeCh chan int) {
-	idealPoolSize := int(float64(num) * 0.25)
+	idealPoolSize := int(float64(num) * 0.25) 	// 计算理想协程数
 	if idealPoolSize < 1 {
 		idealPoolSize = 1
 	} else if idealPoolSize > n.getOpts().QueueScanWorkerPoolMax {
@@ -603,14 +603,14 @@ func (n *NSQD) resizePool(num int, workCh chan *Channel, responseCh chan bool, c
 	for {
 		if idealPoolSize == n.poolSize {
 			break
-		} else if idealPoolSize < n.poolSize {
+		} else if idealPoolSize < n.poolSize {	// 如果 pool size 比 理想数多 则发送 chan 通知一个 goroutine 关闭，计数-1
 			// contract
 			closeCh <- 1
 			n.poolSize--
-		} else {
+		} else {	// 如果 pool size 比理想数少，则开启新的 goroutine ，计数+1
 			// expand
 			n.waitGroup.Wrap(func() {
-				n.queueScanWorker(workCh, responseCh, closeCh)
+				n.queueScanWorker(workCh, responseCh, closeCh)	// 处理 in-flight 和 Deferred 消息
 			})
 			n.poolSize++
 		}
@@ -619,16 +619,16 @@ func (n *NSQD) resizePool(num int, workCh chan *Channel, responseCh chan bool, c
 
 // queueScanWorker receives work (in the form of a channel) from queueScanLoop
 // and processes the deferred and in-flight queues
-func (n *NSQD) queueScanWorker(workCh chan *Channel, responseCh chan bool, closeCh chan int) {
+func (n *NSQD) queueScanWorker(workCh chan *Channel, responseCh chan bool, closeCh chan int) {	// 处理 in-flight 和 Deferred 消息
 	for {
 		select {
 		case c := <-workCh:
 			now := time.Now().UnixNano()
 			dirty := false
-			if c.processInFlightQueue(now) {
+			if c.processInFlightQueue(now) {	// 处理 in-flight 队列消息 true 表示处理过一个消息
 				dirty = true
 			}
-			if c.processDeferredQueue(now) {
+			if c.processDeferredQueue(now) {	// 处理 deferred 队列消息 true 表示处理过一个消息
 				dirty = true
 			}
 			responseCh <- dirty
@@ -651,7 +651,7 @@ func (n *NSQD) queueScanWorker(workCh chan *Channel, responseCh chan bool, close
 //
 // If QueueScanDirtyPercent (default: 25%) of the selected channels were dirty,
 // the loop continues without sleep.
-func (n *NSQD) queueScanLoop() {
+func (n *NSQD) queueScanLoop() {	// 主要处理 in-flight 和 Deferred 消息
 	workCh := make(chan *Channel, n.getOpts().QueueScanSelectionCount)
 	responseCh := make(chan bool, n.getOpts().QueueScanSelectionCount)
 	closeCh := make(chan int)
@@ -659,20 +659,20 @@ func (n *NSQD) queueScanLoop() {
 	workTicker := time.NewTicker(n.getOpts().QueueScanInterval)
 	refreshTicker := time.NewTicker(n.getOpts().QueueScanRefreshInterval)
 
-	channels := n.channels()
-	n.resizePool(len(channels), workCh, responseCh, closeCh)
+	channels := n.channels()	// 获取 所有 topic 中的所有 channel
+	n.resizePool(len(channels), workCh, responseCh, closeCh)	// 调整 pool 中的 goroutine 在合适的数量，并处理 workCh 中的 channel
 
 	for {
 		select {
-		case <-workTicker.C:
+		case <-workTicker.C:	// 工作定时器控制下面 loop 逻辑的间隔
 			if len(channels) == 0 {
 				continue
 			}
-		case <-refreshTicker.C:
+		case <-refreshTicker.C:	// refreshTicker 定时器控制 pool 的刷新间隔
 			channels = n.channels()
 			n.resizePool(len(channels), workCh, responseCh, closeCh)
 			continue
-		case <-n.exitChan:
+		case <-n.exitChan:		// 接收到 exit 通知 则退出
 			goto exit
 		}
 
@@ -682,18 +682,18 @@ func (n *NSQD) queueScanLoop() {
 		}
 
 	loop:
-		for _, i := range util.UniqRands(num, len(channels)) {
-			workCh <- channels[i]
+		for _, i := range util.UniqRands(num, len(channels)) {	// 从 0-len(channels) 中选出 num 个数
+			workCh <- channels[i]	// 将 i 对应的 channel 放入 workCh 中， pool 中的 goroutine 会消费这个 workCh 来进行工作
 		}
 
 		numDirty := 0
 		for i := 0; i < num; i++ {
-			if <-responseCh {
+			if <-responseCh {	// pool 中的 goroutine 处理完 workCh 中的 channel，如果处理过消息(即 channel 中有待处理的 in-flight/deferred 消息), 则将 dirty=true 写入 responseCh ，因此 numDirty 记录的是 num 个channel 中处理过消息的个数
 				numDirty++
 			}
 		}
 
-		if float64(numDirty)/float64(num) > n.getOpts().QueueScanDirtyPercent {
+		if float64(numDirty)/float64(num) > n.getOpts().QueueScanDirtyPercent {	// 如果有一定比例的 channel中有待处理的消息，则继续 loop 循环处理, 直到小于这个比例，才开始大循环等待定时器
 			goto loop
 		}
 	}
