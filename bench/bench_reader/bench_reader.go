@@ -11,7 +11,7 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/TianZhH/go-nsq"
+	"github.com/nsqio/go-nsq"
 )
 
 var (

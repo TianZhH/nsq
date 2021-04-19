@@ -8,25 +8,25 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/TianZhH/go-nsq"
+	"github.com/nsqio/go-nsq"
 	"github.com/TianZhH/nsq/internal/version"
 )
 
-func connectCallback(n *NSQD, hostname string) func(*lookupPeer) {
+func connectCallback(n *NSQD, hostname string) func(*lookupPeer) {// nsqd 与 nsqlookup 首次建立连接时，需要执行 callback, 注册元信息
 	return func(lp *lookupPeer) {
-		ci := make(map[string]interface{})
+		ci := make(map[string]interface{})	// 封装 nsqd 的元数据信息
 		ci["version"] = version.Binary
 		ci["tcp_port"] = n.RealTCPAddr().Port
 		ci["http_port"] = n.RealHTTPAddr().Port
 		ci["hostname"] = hostname
 		ci["broadcast_address"] = n.getOpts().BroadcastAddress
 
-		cmd, err := nsq.Identify(ci)
+		cmd, err := nsq.Identify(ci)	// 生成 IDENTIFY 命令
 		if err != nil {
 			lp.Close()
 			return
 		}
-		resp, err := lp.Command(cmd)
+		resp, err := lp.Command(cmd)	// 执行 Identify 命令
 		if err != nil {
 			n.logf(LOG_ERROR, "LOOKUPD(%s): %s - %s", lp, cmd, err)
 			return
@@ -35,7 +35,7 @@ func connectCallback(n *NSQD, hostname string) func(*lookupPeer) {
 			lp.Close()
 			return
 		} else {
-			err = json.Unmarshal(resp, &lp.Info)
+			err = json.Unmarshal(resp, &lp.Info)	// 解析 lookupd 返回的信息
 			if err != nil {
 				n.logf(LOG_ERROR, "LOOKUPD(%s): parsing response - %s", lp, resp)
 				lp.Close()
@@ -97,7 +97,7 @@ func (n *NSQD) lookupLoop() {
 				n.logf(LOG_INFO, "LOOKUP(%s): adding peer", host)
 				lookupPeer := newLookupPeer(host, n.getOpts().MaxBodySize, n.logf,
 					connectCallback(n, hostname))
-				lookupPeer.Command(nil) // start the connection
+				lookupPeer.Command(nil) // start the connection	// command 为空 则与 nsqlookupd 只建立连接
 				lookupPeers = append(lookupPeers, lookupPeer)
 				lookupAddrs = append(lookupAddrs, host)
 			}
@@ -106,7 +106,7 @@ func (n *NSQD) lookupLoop() {
 		}
 
 		select {
-		case <-ticker:
+		case <-ticker:	// 发送心跳消息到 nsqlookup
 			// send a heartbeat and read a response (read detects closed conns)
 			for _, lookupPeer := range lookupPeers {
 				n.logf(LOG_DEBUG, "LOOKUPD(%s): sending heartbeat", lookupPeer)
@@ -116,7 +116,7 @@ func (n *NSQD) lookupLoop() {
 					n.logf(LOG_ERROR, "LOOKUPD(%s): %s - %s", lookupPeer, cmd, err)
 				}
 			}
-		case val := <-n.notifyChan:
+		case val := <-n.notifyChan: // 新建 topic / channel ，拼装 cmd 并发送给所有 nsqlookup
 			var cmd *nsq.Command
 			var branch string
 
@@ -148,7 +148,7 @@ func (n *NSQD) lookupLoop() {
 					n.logf(LOG_ERROR, "LOOKUPD(%s): %s - %s", lookupPeer, cmd, err)
 				}
 			}
-		case <-n.optsNotificationChan:
+		case <-n.optsNotificationChan:  // TODO
 			var tmpPeers []*lookupPeer
 			var tmpAddrs []string
 			for _, lp := range lookupPeers {

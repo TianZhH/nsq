@@ -7,7 +7,7 @@ import (
 	"net"
 	"time"
 
-	"github.com/TianZhH/go-nsq"
+	"github.com/nsqio/go-nsq"
 	"github.com/TianZhH/nsq/internal/lg"
 )
 
@@ -92,19 +92,19 @@ func (lp *lookupPeer) Close() error {
 // It returns the response from nsqlookupd as []byte
 func (lp *lookupPeer) Command(cmd *nsq.Command) ([]byte, error) {
 	initialState := lp.state
-	if lp.state != stateConnected {
-		err := lp.Connect()
+	if lp.state != stateConnected {	// 发送命令之前 先保证 nsqlookup已连接
+		err := lp.Connect()	// 与配置的对端建立连接TCPConn, 并将其赋值给 lp.conn
 		if err != nil {
 			return nil, err
 		}
-		lp.state = stateConnected
-		_, err = lp.Write(nsq.MagicV1)
+		lp.state = stateConnected	// 将连接状态置为 已连接
+		_, err = lp.Write(nsq.MagicV1)	// 建立连接后 首先发送一个 magic 标识客户端版本号 https://nsq.io/clients/tcp_protocol_spec.html#identify
 		if err != nil {
 			lp.Close()
 			return nil, err
 		}
 		if initialState == stateDisconnected {
-			lp.connectCallback(lp)
+			lp.connectCallback(lp)	// 如果之前断开过 则需要执行 connectCallback 注册 nsqd 的元信息到 nsqlookup
 		}
 		if lp.state != stateConnected {
 			return nil, fmt.Errorf("lookupPeer connectCallback() failed")
@@ -113,12 +113,12 @@ func (lp *lookupPeer) Command(cmd *nsq.Command) ([]byte, error) {
 	if cmd == nil {
 		return nil, nil
 	}
-	_, err := cmd.WriteTo(lp)
+	_, err := cmd.WriteTo(lp)	// 将 cmd 序列化并发送到 lp.conn
 	if err != nil {
 		lp.Close()
 		return nil, err
 	}
-	resp, err := readResponseBounded(lp, lp.maxBodySize)
+	resp, err := readResponseBounded(lp, lp.maxBodySize)	// 从 lp.conn 读取返回数据
 	if err != nil {
 		lp.Close()
 		return nil, err

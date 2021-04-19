@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/TianZhH/go-nsq"
+	"github.com/nsqio/go-nsq"
 	"github.com/TianZhH/nsq/internal/lg"
 )
 

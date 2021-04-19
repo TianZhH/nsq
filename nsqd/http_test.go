@@ -17,7 +17,7 @@ import (
 
 	"strings"
 
-	"github.com/TianZhH/go-nsq"
+	"github.com/nsqio/go-nsq"
 	"github.com/TianZhH/nsq/internal/http_api"
 	"github.com/TianZhH/nsq/internal/test"
 	"github.com/TianZhH/nsq/internal/version"

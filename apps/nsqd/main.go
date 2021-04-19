@@ -39,7 +39,7 @@ func (p *program) Init(env svc.Environment) error {
 }
 
 func (p *program) Start() error {
-	opts := nsqd.NewOptions()
+	opts := nsqd.NewOptions()	// 初始化 配置文件
 
 	flagSet := nsqdFlagSet(opts)
 	flagSet.Parse(os.Args[1:])

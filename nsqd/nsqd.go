@@ -258,29 +258,29 @@ func (n *NSQD) Main() error {
 	}
 
 	n.tcpServer.ctx = ctx
-	n.waitGroup.Wrap(func() {
+	n.waitGroup.Wrap(func() {	// 启动 tcp server
 		exitFunc(protocol.TCPServer(n.tcpListener, n.tcpServer, n.logf))
 	})
 
 	httpServer := newHTTPServer(ctx, false, n.getOpts().TLSRequired == TLSRequired)
-	n.waitGroup.Wrap(func() {
+	n.waitGroup.Wrap(func() {	// 启动 http server
 		exitFunc(http_api.Serve(n.httpListener, httpServer, "HTTP", n.logf))
 	})
 
-	if n.tlsConfig != nil && n.getOpts().HTTPSAddress != "" {
+	if n.tlsConfig != nil && n.getOpts().HTTPSAddress != "" {	// 启动 https server
 		httpsServer := newHTTPServer(ctx, true, true)
 		n.waitGroup.Wrap(func() {
 			exitFunc(http_api.Serve(n.httpsListener, httpsServer, "HTTPS", n.logf))
 		})
 	}
 
-	n.waitGroup.Wrap(n.queueScanLoop)
-	n.waitGroup.Wrap(n.lookupLoop)
+	n.waitGroup.Wrap(n.queueScanLoop)	// 启动 goroutine 处理 in-flight/deferred 消息
+	n.waitGroup.Wrap(n.lookupLoop)		// 启动 goroutine 与 nsqlookup 建立连接, 并持续发送心跳等
 	if n.getOpts().StatsdAddress != "" {
 		n.waitGroup.Wrap(n.statsdLoop)
 	}
 
-	err := <-exitCh
+	err := <-exitCh	// 一旦 exitFunc 启动的服务发生错误 就退出
 	return err
 }
 
@@ -625,10 +625,10 @@ func (n *NSQD) queueScanWorker(workCh chan *Channel, responseCh chan bool, close
 		case c := <-workCh:
 			now := time.Now().UnixNano()
 			dirty := false
-			if c.processInFlightQueue(now) {	// 处理 in-flight 队列消息 true 表示处理过一个消息
+			if c.processInFlightQueue(now) {	// 处理 in-flight 队列消息, true 表示处理过一个消息
 				dirty = true
 			}
-			if c.processDeferredQueue(now) {	// 处理 deferred 队列消息 true 表示处理过一个消息
+			if c.processDeferredQueue(now) {	// 处理 deferred 队列消息, true 表示处理过一个消息
 				dirty = true
 			}
 			responseCh <- dirty
