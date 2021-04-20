@@ -48,7 +48,7 @@ func NewGUIDFactory(nodeID int64) *guidFactory {
 	}
 }
 
-func (f *guidFactory) NewGUID() (guid, error) {
+func (f *guidFactory) NewGUID() (guid, error) {		// 参考 noeqd 和 snowflake 算法生成唯一 id
 	f.Lock()
 
 	// divide by 1048576, giving pseudo-milliseconds

@@ -47,7 +47,7 @@ func (p *protocolV2) IOLoop(conn net.Conn) error {	// 循环处理网络事件
 	// goroutine local state derived from client attributes
 	// and avoid a potential race with IDENTIFY (where a client
 	// could have changed or disabled said attributes)
-	messagePumpStartedChan := make(chan bool)
+	messagePumpStartedChan := make(chan bool)	// 用来通知 messagePump 流程已初始化完毕 开始 pump 流程
 	go p.messagePump(client, messagePumpStartedChan)
 	<-messagePumpStartedChan
 
@@ -174,13 +174,13 @@ func (p *protocolV2) Exec(client *clientV2, params [][]byte) ([]byte, error) {
 	}
 	switch {
 	case bytes.Equal(params[0], []byte("FIN")):
-		return p.FIN(client, params)
+		return p.FIN(client, params)	// 将 message 从 in-flight 队列中移除
 	case bytes.Equal(params[0], []byte("RDY")):
-		return p.RDY(client, params)
+		return p.RDY(client, params)	// 设置 client.ReadyCount = RDY 命令指定的 count
 	case bytes.Equal(params[0], []byte("REQ")):
-		return p.REQ(client, params)
+		return p.REQ(client, params)	// 将 消息从 in-flight 队列取出，放到 deferred 队列中，并设置超时时间
 	case bytes.Equal(params[0], []byte("PUB")):
-		return p.PUB(client, params)
+		return p.PUB(client, params)	// 为消息生成唯一id，并写入到topic, topic chan 已满则写入磁盘
 	case bytes.Equal(params[0], []byte("MPUB")):
 		return p.MPUB(client, params)
 	case bytes.Equal(params[0], []byte("DPUB")):
@@ -345,14 +345,14 @@ exit:
 	}
 }
 
-func (p *protocolV2) IDENTIFY(client *clientV2, params [][]byte) ([]byte, error) {
+func (p *protocolV2) IDENTIFY(client *clientV2, params [][]byte) ([]byte, error) {	// 参考官方文档 https://nsq.io/clients/tcp_protocol_spec.html#identify
 	var err error
 
-	if atomic.LoadInt32(&client.State) != stateInit {
+	if atomic.LoadInt32(&client.State) != stateInit {	// 初始化状态才能进行 IDENTIFY 操作
 		return nil, protocol.NewFatalClientErr(nil, "E_INVALID", "cannot IDENTIFY in current state")
 	}
 
-	bodyLen, err := readLen(client.Reader, client.lenSlice)
+	bodyLen, err := readLen(client.Reader, client.lenSlice) // IDENTIFY\n [ 4-byte size in bytes ][ N-byte JSON data ]  前面已经读取了\n之前的 IDENTIFY 命令， 这里读取的是\n后面标识 body 长度 4 字节数据
 	if err != nil {
 		return nil, protocol.NewFatalClientErr(err, "E_BAD_BODY", "IDENTIFY failed to read body size")
 	}
@@ -368,46 +368,46 @@ func (p *protocolV2) IDENTIFY(client *clientV2, params [][]byte) ([]byte, error)
 	}
 
 	body := make([]byte, bodyLen)
-	_, err = io.ReadFull(client.Reader, body)
+	_, err = io.ReadFull(client.Reader, body)	// 按照协议制定的 body 长度，读取 body 数据
 	if err != nil {
 		return nil, protocol.NewFatalClientErr(err, "E_BAD_BODY", "IDENTIFY failed to read body")
 	}
 
 	// body is a json structure with producer information
 	var identifyData identifyDataV2
-	err = json.Unmarshal(body, &identifyData)
+	err = json.Unmarshal(body, &identifyData) // 解析 body
 	if err != nil {
 		return nil, protocol.NewFatalClientErr(err, "E_BAD_BODY", "IDENTIFY failed to decode JSON body")
 	}
 
 	p.ctx.nsqd.logf(LOG_DEBUG, "PROTOCOL(V2): [%s] %+v", client, identifyData)
 
-	err = client.Identify(identifyData)
+	err = client.Identify(identifyData)	// 更新 client 元数据
 	if err != nil {
 		return nil, protocol.NewFatalClientErr(err, "E_BAD_BODY", "IDENTIFY "+err.Error())
 	}
 
 	// bail out early if we're not negotiating features
-	if !identifyData.FeatureNegotiation {
+	if !identifyData.FeatureNegotiation {	// 客户端不支持协商功能，直接返回
 		return okBytes, nil
 	}
 
-	tlsv1 := p.ctx.nsqd.tlsConfig != nil && identifyData.TLSv1
-	deflate := p.ctx.nsqd.getOpts().DeflateEnabled && identifyData.Deflate
-	deflateLevel := 6
+	tlsv1 := p.ctx.nsqd.tlsConfig != nil && identifyData.TLSv1	// 如果 nsq 支持 tls 且 客户端启用tls， 则 tlsv1 = true
+	deflate := p.ctx.nsqd.getOpts().DeflateEnabled && identifyData.Deflate	// 如果 nsq 支持压缩 且 客户端启用此功能，则 deflate = true
+	deflateLevel := 6	// 压缩等级优先级: 本地配置的最大等级 > 客户端指定压缩等级 > 默认等级
 	if deflate && identifyData.DeflateLevel > 0 {
 		deflateLevel = identifyData.DeflateLevel
 	}
 	if max := p.ctx.nsqd.getOpts().MaxDeflateLevel; max < deflateLevel {
 		deflateLevel = max
 	}
-	snappy := p.ctx.nsqd.getOpts().SnappyEnabled && identifyData.Snappy
+	snappy := p.ctx.nsqd.getOpts().SnappyEnabled && identifyData.Snappy	// 如果 nsq 支持快照压缩 且 客户端启用此功能， 则 snappy = true
 
-	if deflate && snappy {
+	if deflate && snappy {	// 不能同时启用快照压缩和 deflate 压缩
 		return nil, protocol.NewFatalClientErr(nil, "E_IDENTIFY_FAILED", "cannot enable both deflate and snappy compression")
 	}
 
-	resp, err := json.Marshal(struct {
+	resp, err := json.Marshal(struct {		// 封装协商之后的数据
 		MaxRdyCount         int64  `json:"max_rdy_count"`
 		Version             string `json:"version"`
 		MaxMsgTimeout       int64  `json:"max_msg_timeout"`
@@ -445,7 +445,7 @@ func (p *protocolV2) IDENTIFY(client *clientV2, params [][]byte) ([]byte, error)
 		return nil, protocol.NewFatalClientErr(err, "E_IDENTIFY_FAILED", "IDENTIFY failed "+err.Error())
 	}
 
-	if tlsv1 {
+	if tlsv1 {		// 将 client conn 封装为 tls conn
 		p.ctx.nsqd.logf(LOG_INFO, "PROTOCOL(V2): [%s] upgrading connection to TLS", client)
 		err = client.UpgradeTLS()
 		if err != nil {
@@ -458,7 +458,7 @@ func (p *protocolV2) IDENTIFY(client *clientV2, params [][]byte) ([]byte, error)
 		}
 	}
 
-	if snappy {
+	if snappy {		// 将 client conn 封装为 snappy conn
 		p.ctx.nsqd.logf(LOG_INFO, "PROTOCOL(V2): [%s] upgrading connection to snappy", client)
 		err = client.UpgradeSnappy()
 		if err != nil {
@@ -471,7 +471,7 @@ func (p *protocolV2) IDENTIFY(client *clientV2, params [][]byte) ([]byte, error)
 		}
 	}
 
-	if deflate {
+	if deflate {	// 将 client conn 封装为 deflate conn
 		p.ctx.nsqd.logf(LOG_INFO, "PROTOCOL(V2): [%s] upgrading connection to deflate (level %d)", client, deflateLevel)
 		err = client.UpgradeDeflate(deflateLevel)
 		if err != nil {
@@ -688,7 +688,7 @@ func (p *protocolV2) FIN(client *clientV2, params [][]byte) ([]byte, error) {
 		return nil, protocol.NewFatalClientErr(nil, "E_INVALID", err.Error())
 	}
 
-	err = client.Channel.FinishMessage(client.ID, *id)
+	err = client.Channel.FinishMessage(client.ID, *id)	// 将 message 从 in-flight 队列中移除
 	if err != nil {
 		return nil, protocol.NewClientErr(err, "E_FIN_FAILED",
 			fmt.Sprintf("FIN %s failed %s", *id, err.Error()))
@@ -723,7 +723,7 @@ func (p *protocolV2) REQ(client *clientV2, params [][]byte) ([]byte, error) {
 
 	maxReqTimeout := p.ctx.nsqd.getOpts().MaxReqTimeout
 	clampedTimeout := timeoutDuration
-
+	// 校验指定的超时时间
 	if timeoutDuration < 0 {
 		clampedTimeout = 0
 	} else if timeoutDuration > maxReqTimeout {
@@ -735,7 +735,7 @@ func (p *protocolV2) REQ(client *clientV2, params [][]byte) ([]byte, error) {
 		timeoutDuration = clampedTimeout
 	}
 
-	err = client.Channel.RequeueMessage(client.ID, *id, timeoutDuration)
+	err = client.Channel.RequeueMessage(client.ID, *id, timeoutDuration)	// 将 消息从 in-flight 队列取出，放到 deferred 队列中，并设置超时时间
 	if err != nil {
 		return nil, protocol.NewClientErr(err, "E_REQ_FAILED",
 			fmt.Sprintf("REQ %s failed %s", *id, err.Error()))
@@ -760,7 +760,7 @@ func (p *protocolV2) NOP(client *clientV2, params [][]byte) ([]byte, error) {
 	return nil, nil
 }
 
-func (p *protocolV2) PUB(client *clientV2, params [][]byte) ([]byte, error) {
+func (p *protocolV2) PUB(client *clientV2, params [][]byte) ([]byte, error) {	// 协议地址 https://nsq.io/clients/tcp_protocol_spec.html#identify
 	var err error
 
 	if len(params) < 2 {
@@ -768,12 +768,12 @@ func (p *protocolV2) PUB(client *clientV2, params [][]byte) ([]byte, error) {
 	}
 
 	topicName := string(params[1])
-	if !protocol.IsValidTopicName(topicName) {
+	if !protocol.IsValidTopicName(topicName) {	// topic name 是否合法
 		return nil, protocol.NewFatalClientErr(nil, "E_BAD_TOPIC",
 			fmt.Sprintf("PUB topic name %q is not valid", topicName))
 	}
 
-	bodyLen, err := readLen(client.Reader, client.lenSlice)
+	bodyLen, err := readLen(client.Reader, client.lenSlice)	// 取出 body-len  协议:PUB <topic_name>\n[ 4-byte size in bytes ][ N-byte binary data ]
 	if err != nil {
 		return nil, protocol.NewFatalClientErr(err, "E_BAD_MESSAGE", "PUB failed to read message body size")
 	}
@@ -788,7 +788,7 @@ func (p *protocolV2) PUB(client *clientV2, params [][]byte) ([]byte, error) {
 			fmt.Sprintf("PUB message too big %d > %d", bodyLen, p.ctx.nsqd.getOpts().MaxMsgSize))
 	}
 
-	messageBody := make([]byte, bodyLen)
+	messageBody := make([]byte, bodyLen)	// 取出 message
 	_, err = io.ReadFull(client.Reader, messageBody)
 	if err != nil {
 		return nil, protocol.NewFatalClientErr(err, "E_BAD_MESSAGE", "PUB failed to read message body")
@@ -799,13 +799,13 @@ func (p *protocolV2) PUB(client *clientV2, params [][]byte) ([]byte, error) {
 	}
 
 	topic := p.ctx.nsqd.GetTopic(topicName)
-	msg := NewMessage(topic.GenerateID(), messageBody)
-	err = topic.PutMessage(msg)
+	msg := NewMessage(topic.GenerateID(), messageBody)	// 为 message 生成一个唯一 id
+	err = topic.PutMessage(msg)	// 将 msg put 到 topic 里，内存满则写入到磁盘
 	if err != nil {
 		return nil, protocol.NewFatalClientErr(err, "E_PUB_FAILED", "PUB failed "+err.Error())
 	}
 
-	client.PublishedMessage(topicName, 1)
+	client.PublishedMessage(topicName, 1)		// 更新 topic 已发布的 msg 的计数
 
 	return okBytes, nil
 }

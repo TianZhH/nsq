@@ -217,7 +217,7 @@ func (t *Topic) PutMessages(msgs []*Message) error {
 	return nil
 }
 
-func (t *Topic) put(m *Message) error {
+func (t *Topic) put(m *Message) error {	// 将 msg 写入到内存，如果内存已满则写入到磁盘
 	select {
 	case t.memoryMsgChan <- m:
 	default:

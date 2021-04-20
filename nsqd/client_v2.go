@@ -24,7 +24,7 @@ const (
 	stateClosing
 )
 
-type identifyDataV2 struct {
+type identifyDataV2 struct {	// 参考 https://nsq.io/clients/tcp_protocol_spec.html#identify
 	ClientID            string `json:"client_id"`
 	Hostname            string `json:"hostname"`
 	HeartbeatInterval   int    `json:"heartbeat_interval"`
@@ -154,7 +154,7 @@ func (c *clientV2) String() string {
 	return c.RemoteAddr().String()
 }
 
-func (c *clientV2) Identify(data identifyDataV2) error {
+func (c *clientV2) Identify(data identifyDataV2) error {	// 更新 client 元信息，并投递 identifyEvent 给 pump 处理过程
 	c.ctx.nsqd.logf(LOG_INFO, "[%s] IDENTIFY: %+v", c, data)
 
 	c.metaLock.Lock()

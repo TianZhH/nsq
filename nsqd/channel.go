@@ -306,7 +306,7 @@ func (c *Channel) PutMessage(m *Message) error {
 func (c *Channel) put(m *Message) error {
 	select {
 	case c.memoryMsgChan <- m:
-	default:
+	default:	// 如果内存缓冲区满，则写入磁盘
 		b := bufferPoolGet()	// 从 buffer pool 获取一个 buffer， bufferPool 为 sync.pool
 		err := writeMessageToBackend(b, m, c.backend)	// 将 msg 写入到 backend
 		bufferPoolPut(b)		// 将 buf 返还给 pool
@@ -368,7 +368,7 @@ func (c *Channel) FinishMessage(clientID int64, id MessageID) error {
 // `timeoutMs`  > 0 - asynchronously wait for the specified timeout
 //     and requeue a message (aka "deferred requeue")
 //
-func (c *Channel) RequeueMessage(clientID int64, id MessageID, timeout time.Duration) error {
+func (c *Channel) RequeueMessage(clientID int64, id MessageID, timeout time.Duration) error {	// 将 消息从 in-flight 队列取出，放到 deferred 队列中，并设置超时时间
 	// remove from inflight first
 	msg, err := c.popInFlightMessage(clientID, id)
 	if err != nil {
@@ -440,7 +440,7 @@ func (c *Channel) StartInFlightTimeout(msg *Message, clientID int64, timeout tim
 	return nil
 }
 
-func (c *Channel) StartDeferredTimeout(msg *Message, timeout time.Duration) error {
+func (c *Channel) StartDeferredTimeout(msg *Message, timeout time.Duration) error {	// 将消息插入到 defered 队列中，并设置超时时间
 	absTs := time.Now().Add(timeout).UnixNano()
 	item := &pqueue.Item{Value: msg, Priority: absTs}
 	err := c.pushDeferredMessage(item)
