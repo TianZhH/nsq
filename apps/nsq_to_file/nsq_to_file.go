@@ -12,7 +12,7 @@ import (
 	"time"
 
 	"github.com/mreiferson/go-options"
-	"github.com/nsqio/go-nsq"
+	"github.com/TianZhH/go-nsq"
 	"github.com/TianZhH/nsq/internal/app"
 	"github.com/TianZhH/nsq/internal/lg"
 	"github.com/TianZhH/nsq/internal/version"

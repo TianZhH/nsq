@@ -43,7 +43,7 @@ func (p *tcpServer) Handle(clientConn net.Conn) {
 		return
 	}
 
-	p.conns.Store(clientConn.RemoteAddr(), clientConn)
+	p.conns.Store(clientConn.RemoteAddr(), clientConn)	// 保存本地网络套接字和远程地址的映射
 
 	err = prot.IOLoop(clientConn)
 	if err != nil {

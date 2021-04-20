@@ -61,24 +61,24 @@ func (p *program) Start() error {
 	}
 	cfg.Validate()
 
-	options.Resolve(opts, flagSet, cfg)
+	options.Resolve(opts, flagSet, cfg)	// 合并 默认配置，文件配置，命令行配置，优先级 命令行>配置文件>默认配置
 	nsqd, err := nsqd.New(opts)
 	if err != nil {
 		logFatal("failed to instantiate nsqd - %s", err)
 	}
 	p.nsqd = nsqd
 
-	err = p.nsqd.LoadMetadata()
+	err = p.nsqd.LoadMetadata()		// 加载 nsqd 元信息
 	if err != nil {
 		logFatal("failed to load metadata - %s", err)
 	}
-	err = p.nsqd.PersistMetadata()
+	err = p.nsqd.PersistMetadata()	// TODO 保存 nsqd 最新元信息 不知道意义在哪
 	if err != nil {
 		logFatal("failed to persist metadata - %s", err)
 	}
 
 	go func() {
-		err := p.nsqd.Main()
+		err := p.nsqd.Main()	// 运行 nsqd
 		if err != nil {
 			p.Stop()
 			os.Exit(1)

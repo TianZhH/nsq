@@ -33,13 +33,13 @@ type protocolV2 struct {
 	ctx *context
 }
 
-func (p *protocolV2) IOLoop(conn net.Conn) error {
+func (p *protocolV2) IOLoop(conn net.Conn) error {	// 循环处理网络事件
 	var err error
 	var line []byte
 	var zeroTime time.Time
 
 	clientID := atomic.AddInt64(&p.ctx.nsqd.clientIDSequence, 1)
-	client := newClientV2(clientID, conn, p.ctx)
+	client := newClientV2(clientID, conn, p.ctx)	// 为
 	p.ctx.nsqd.AddClient(client.ID, client)
 
 	// synchronize the startup of messagePump in order

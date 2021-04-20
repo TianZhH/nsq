@@ -358,17 +358,17 @@ func (t *Topic) exit(deleted bool) error {
 
 		// since we are explicitly deleting a topic (not just at system exit time)
 		// de-register this from the lookupd
-		t.ctx.nsqd.Notify(t)
+		t.ctx.nsqd.Notify(t)	// 等待 nsqd.notifyChan 准备好持久化元信息
 	} else {
 		t.ctx.nsqd.logf(LOG_INFO, "TOPIC(%s): closing", t.name)
 	}
 
-	close(t.exitChan)
+	close(t.exitChan)	// 通知其他等待 exitChan 的过程退出
 
 	// synchronize the close of messagePump()
 	t.waitGroup.Wait()
 
-	if deleted {
+	if deleted {	// 删除 topic 下的 channel
 		t.Lock()
 		for _, channel := range t.channelMap {
 			delete(t.channelMap, channel.name)

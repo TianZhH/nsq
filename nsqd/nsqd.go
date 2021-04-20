@@ -323,13 +323,13 @@ func writeSyncFile(fn string, data []byte) error {
 	return err
 }
 
-func (n *NSQD) LoadMetadata() error {
+func (n *NSQD) LoadMetadata() error {	// 加载元文件信息，恢复 topic 和 channel
 	atomic.StoreInt32(&n.isLoading, 1)
 	defer atomic.StoreInt32(&n.isLoading, 0)
 
 	fn := newMetadataFile(n.getOpts())
 
-	data, err := readOrEmpty(fn)
+	data, err := readOrEmpty(fn)	// 读取文件
 	if err != nil {
 		return err
 	}
@@ -338,7 +338,7 @@ func (n *NSQD) LoadMetadata() error {
 	}
 
 	var m meta
-	err = json.Unmarshal(data, &m)
+	err = json.Unmarshal(data, &m)	// 将文件内容反序列化为 meta
 	if err != nil {
 		return fmt.Errorf("failed to parse metadata in %s - %s", fn, err)
 	}
@@ -348,8 +348,8 @@ func (n *NSQD) LoadMetadata() error {
 			n.logf(LOG_WARN, "skipping creation of invalid topic %s", t.Name)
 			continue
 		}
-		topic := n.GetTopic(t.Name)
-		if t.Paused {
+		topic := n.GetTopic(t.Name)	// 获取 topic, 如果没有则创建一个新的 topic
+		if t.Paused {	// 如果元文件为 pause 状态， 则 pause topic
 			topic.Pause()
 		}
 		for _, c := range t.Channels {
@@ -357,12 +357,12 @@ func (n *NSQD) LoadMetadata() error {
 				n.logf(LOG_WARN, "skipping creation of invalid channel %s", c.Name)
 				continue
 			}
-			channel := topic.GetChannel(c.Name)
+			channel := topic.GetChannel(c.Name)	// 获取 channel 没有则创建新的 channel
 			if c.Paused {
-				channel.Pause()
+				channel.Pause()// 如果元文件为 pause 状态， 则 pause channel
 			}
 		}
-		topic.Start()
+		topic.Start()	// 启动 topic
 	}
 	return nil
 }
@@ -423,7 +423,7 @@ func (n *NSQD) PersistMetadata() error {
 	return nil
 }
 
-func (n *NSQD) Exit() {
+func (n *NSQD) Exit() {	// 关闭监听的服务 持久化 topic/channel, 关闭 topic/channel, 通知子 goroutine 退出, 等子 goroutine 退出后退出
 	if n.tcpListener != nil {
 		n.tcpListener.Close()
 	}
@@ -452,7 +452,7 @@ func (n *NSQD) Exit() {
 
 	n.logf(LOG_INFO, "NSQ: stopping subsystems")
 	close(n.exitChan)	// NSQ 通过 关闭 chan 来通知监听此 chan 的 goroutine 退出
-	n.waitGroup.Wait()
+	n.waitGroup.Wait()	// 等待 nsqd.Main()中 n.waitGroup.Wrap() 的 go 协程退出
 	n.dl.Unlock()
 	n.logf(LOG_INFO, "NSQ: bye")
 }
@@ -476,7 +476,7 @@ func (n *NSQD) GetTopic(topicName string) *Topic {
 		return t
 	}
 	deleteCallback := func(t *Topic) {
-		n.DeleteExistingTopic(t.name)
+		n.DeleteExistingTopic(t.name)	// 删除回调函数
 	}
 	t = NewTopic(topicName, &context{n}, deleteCallback)
 	n.topicMap[topicName] = t
