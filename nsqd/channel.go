@@ -327,25 +327,25 @@ func (c *Channel) PutMessageDeferred(msg *Message, timeout time.Duration) {
 
 // TouchMessage resets the timeout for an in-flight message
 func (c *Channel) TouchMessage(clientID int64, id MessageID, clientMsgTimeout time.Duration) error {
-	msg, err := c.popInFlightMessage(clientID, id)
+	msg, err := c.popInFlightMessage(clientID, id)	// 从 id->msg map 中取出 msg 并移除
 	if err != nil {
 		return err
 	}
-	c.removeFromInFlightPQ(msg)
+	c.removeFromInFlightPQ(msg)	// 将消息从 in-flight 大顶堆队列中移除
 
-	newTimeout := time.Now().Add(clientMsgTimeout)
+	newTimeout := time.Now().Add(clientMsgTimeout)	// 如果设置的超时时间 超过了配置的消息最大超时时间 则设置消息的超时时间为 消息生成时间 + 最大超时时间
 	if newTimeout.Sub(msg.deliveryTS) >=
 		c.ctx.nsqd.getOpts().MaxMsgTimeout {
 		// we would have gone over, set to the max
 		newTimeout = msg.deliveryTS.Add(c.ctx.nsqd.getOpts().MaxMsgTimeout)
 	}
 
-	msg.pri = newTimeout.UnixNano()
-	err = c.pushInFlightMessage(msg)
+	msg.pri = newTimeout.UnixNano()	// 重新设置消息的超时时间
+	err = c.pushInFlightMessage(msg)	// 将新消息重新放入 id->msg map
 	if err != nil {
 		return err
 	}
-	c.addToInFlightPQ(msg)
+	c.addToInFlightPQ(msg)	// 将消息重新放入到 in-flight 大顶堆队列
 	return nil
 }
 

@@ -204,7 +204,7 @@ func (t *Topic) PutMessages(msgs []*Message) error {
 
 	for i, m := range msgs {
 		err := t.put(m)
-		if err != nil {
+		if err != nil {	// 前面已写入的仍然生效， 写写入的计数仍会增加
 			atomic.AddUint64(&t.messageCount, uint64(i))
 			atomic.AddUint64(&t.messageBytes, uint64(messageTotalBytes))
 			return err

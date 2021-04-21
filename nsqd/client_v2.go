@@ -192,7 +192,7 @@ func (c *clientV2) Identify(data identifyDataV2) error {	// 更新 client 元信
 
 	// update the client's message pump
 	select {
-	case c.IdentifyEventChan <- ie:
+	case c.IdentifyEventChan <- ie:	// pump 处理流程会监听这个 chan，并更新 pump 处理流程中的一些配置
 	default:
 	}
 
