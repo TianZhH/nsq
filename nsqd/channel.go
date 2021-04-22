@@ -36,7 +36,7 @@ type Consumer interface {
 type Channel struct {
 	// 64bit atomic vars need to be first for proper alignment on 32bit platforms
 	requeueCount uint64
-	messageCount uint64
+	messageCount uint64	// 计数 channel 中的 message 总数
 	timeoutCount uint64
 
 	sync.RWMutex
@@ -210,7 +210,7 @@ finish:
 
 // flush persists all the messages in internal memory buffers to the backend
 // it does not drain inflight/deferred because it is only called in Close()
-func (c *Channel) flush() error {
+func (c *Channel) flush() error {	// 将内存中的 msg 刷新到磁盘
 	var msgBuf bytes.Buffer
 
 	if len(c.memoryMsgChan) > 0 || len(c.inFlightMessages) > 0 || len(c.deferredMessages) > 0 {
@@ -289,7 +289,7 @@ func (c *Channel) IsPaused() bool {
 }
 
 // PutMessage writes a Message to the queue
-func (c *Channel) PutMessage(m *Message) error {
+func (c *Channel) PutMessage(m *Message) error {	// 将消息存入内存或磁盘，更新 channel msg 计数，用于 put 新消息
 	c.RLock()
 	defer c.RUnlock()
 	if c.Exiting() {
@@ -303,7 +303,7 @@ func (c *Channel) PutMessage(m *Message) error {
 	return nil
 }
 
-func (c *Channel) put(m *Message) error {
+func (c *Channel) put(m *Message) error { 	// 将消息存入内存或磁盘
 	select {
 	case c.memoryMsgChan <- m:
 	default:	// 如果内存缓冲区满，则写入磁盘

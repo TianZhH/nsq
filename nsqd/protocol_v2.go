@@ -199,7 +199,7 @@ func (p *protocolV2) Exec(client *clientV2, params [][]byte) ([]byte, error) {
 	return nil, protocol.NewFatalClientErr(nil, "E_INVALID", fmt.Sprintf("invalid command %s", params[0]))
 }
 
-func (p *protocolV2) messagePump(client *clientV2, startedChan chan bool) {
+func (p *protocolV2) messagePump(client *clientV2, startedChan chan bool) {// 消费 client 订阅的 channel 的 memoryMsgChan 和 backendMsgChan， 发送给 client
 	var err error
 	var memoryMsgChan chan *Message
 	var backendMsgChan <-chan []byte

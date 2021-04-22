@@ -241,7 +241,7 @@ func (t *Topic) Depth() int64 {
 
 // messagePump selects over the in-memory and backend queue and
 // writes messages to every channel for this topic
-func (t *Topic) messagePump() {
+func (t *Topic) messagePump() {	// 将 topic 中的 msg  copy 到 topic 中的 channels
 	var msg *Message
 	var buf []byte
 	var err error
