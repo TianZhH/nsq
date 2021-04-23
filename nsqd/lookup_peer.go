@@ -92,7 +92,7 @@ func (lp *lookupPeer) Close() error {
 // It returns the response from nsqlookupd as []byte
 func (lp *lookupPeer) Command(cmd *nsq.Command) ([]byte, error) {
 	initialState := lp.state
-	if lp.state != stateConnected {	// 发送命令之前 先保证 nsqlookup已连接
+	if lp.state != stateConnected {	// 发送命令之前 先保证 nsqlookup 已连接
 		err := lp.Connect()	// 与配置的对端建立连接TCPConn, 并将其赋值给 lp.conn
 		if err != nil {
 			return nil, err
@@ -104,7 +104,7 @@ func (lp *lookupPeer) Command(cmd *nsq.Command) ([]byte, error) {
 			return nil, err
 		}
 		if initialState == stateDisconnected {
-			lp.connectCallback(lp)	// 如果之前断开过 则需要执行 connectCallback 注册 nsqd 的元信息到 nsqlookup
+			lp.connectCallback(lp)	// 如果之前断开过 则需要执行 connectCallback 1. 通过 IDENTIFY 注册元信息 2. 向 nsplookup 注册 topic/channel 信息
 		}
 		if lp.state != stateConnected {
 			return nil, fmt.Errorf("lookupPeer connectCallback() failed")

@@ -321,7 +321,7 @@ func (t *Topic) messagePump() {	// 将 topic 中的 msg  copy 到 topic 中的 c
 				chanMsg.Timestamp = msg.Timestamp
 				chanMsg.deferred = msg.deferred
 			}
-			if chanMsg.deferred != 0 {
+			if chanMsg.deferred != 0 {	// 如果 deferred != 0 则放入 channel 的 deferred 队列，否则放入 channel memChan
 				channel.PutMessageDeferred(chanMsg, chanMsg.deferred)
 				continue
 			}

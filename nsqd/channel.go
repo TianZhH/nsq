@@ -331,7 +331,7 @@ func (c *Channel) TouchMessage(clientID int64, id MessageID, clientMsgTimeout ti
 	if err != nil {
 		return err
 	}
-	c.removeFromInFlightPQ(msg)	// 将消息从 in-flight 大顶堆队列中移除
+	c.removeFromInFlightPQ(msg)	// 将消息从 in-flight 小顶堆队列中移除
 
 	newTimeout := time.Now().Add(clientMsgTimeout)	// 如果设置的超时时间 超过了配置的消息最大超时时间 则设置消息的超时时间为 消息生成时间 + 最大超时时间
 	if newTimeout.Sub(msg.deliveryTS) >=
@@ -345,7 +345,7 @@ func (c *Channel) TouchMessage(clientID int64, id MessageID, clientMsgTimeout ti
 	if err != nil {
 		return err
 	}
-	c.addToInFlightPQ(msg)	// 将消息重新放入到 in-flight 大顶堆队列
+	c.addToInFlightPQ(msg)	// 将消息重新放入到 in-flight 小顶堆队列
 	return nil
 }
 
@@ -427,11 +427,11 @@ func (c *Channel) RemoveClient(clientID int64) {
 	}
 }
 
-func (c *Channel) StartInFlightTimeout(msg *Message, clientID int64, timeout time.Duration) error {
+func (c *Channel) StartInFlightTimeout(msg *Message, clientID int64, timeout time.Duration) error {	// 发送消息前将消息放到 in-flight 队列中
 	now := time.Now()
 	msg.clientID = clientID
 	msg.deliveryTS = now
-	msg.pri = now.Add(timeout).UnixNano()
+	msg.pri = now.Add(timeout).UnixNano()	// in-flight 为最小堆优先级队列 优先级=now+timeout
 	err := c.pushInFlightMessage(msg)
 	if err != nil {
 		return err
@@ -440,9 +440,9 @@ func (c *Channel) StartInFlightTimeout(msg *Message, clientID int64, timeout tim
 	return nil
 }
 
-func (c *Channel) StartDeferredTimeout(msg *Message, timeout time.Duration) error {	// 将消息插入到 defered 队列中，并设置超时时间
+func (c *Channel) StartDeferredTimeout(msg *Message, timeout time.Duration) error {	// 将消息插入到 deferred 队列中，并设置超时时间
 	absTs := time.Now().Add(timeout).UnixNano()
-	item := &pqueue.Item{Value: msg, Priority: absTs}
+	item := &pqueue.Item{Value: msg, Priority: absTs}	// deferred 队列为最小堆优先级队列 优先级=now+timeout
 	err := c.pushDeferredMessage(item)
 	if err != nil {
 		return err
@@ -452,7 +452,7 @@ func (c *Channel) StartDeferredTimeout(msg *Message, timeout time.Duration) erro
 }
 
 // pushInFlightMessage atomically adds a message to the in-flight dictionary
-func (c *Channel) pushInFlightMessage(msg *Message) error {
+func (c *Channel) pushInFlightMessage(msg *Message) error {		// 将 msg 写入 in-flight map
 	c.inFlightMutex.Lock()
 	_, ok := c.inFlightMessages[msg.ID]
 	if ok {
@@ -465,7 +465,7 @@ func (c *Channel) pushInFlightMessage(msg *Message) error {
 }
 
 // popInFlightMessage atomically removes a message from the in-flight dictionary
-func (c *Channel) popInFlightMessage(clientID int64, id MessageID) (*Message, error) {
+func (c *Channel) popInFlightMessage(clientID int64, id MessageID) (*Message, error) {	// 将 msg 从 in-flight map 取出并删除
 	c.inFlightMutex.Lock()
 	msg, ok := c.inFlightMessages[id]
 	if !ok {
@@ -481,13 +481,13 @@ func (c *Channel) popInFlightMessage(clientID int64, id MessageID) (*Message, er
 	return msg, nil
 }
 
-func (c *Channel) addToInFlightPQ(msg *Message) {
+func (c *Channel) addToInFlightPQ(msg *Message) {	// 将 msg 添加到 in-flight queue
 	c.inFlightMutex.Lock()
 	c.inFlightPQ.Push(msg)
 	c.inFlightMutex.Unlock()
 }
 
-func (c *Channel) removeFromInFlightPQ(msg *Message) {
+func (c *Channel) removeFromInFlightPQ(msg *Message) {	// 将 msg 从 in-flight queue 移除
 	c.inFlightMutex.Lock()
 	if msg.index == -1 {
 		// this item has already been popped off the pqueue
@@ -498,7 +498,7 @@ func (c *Channel) removeFromInFlightPQ(msg *Message) {
 	c.inFlightMutex.Unlock()
 }
 
-func (c *Channel) pushDeferredMessage(item *pqueue.Item) error {
+func (c *Channel) pushDeferredMessage(item *pqueue.Item) error {	// 将 msg 添加到 deferred map
 	c.deferredMutex.Lock()
 	// TODO: these map lookups are costly
 	id := item.Value.(*Message).ID
@@ -512,7 +512,7 @@ func (c *Channel) pushDeferredMessage(item *pqueue.Item) error {
 	return nil
 }
 
-func (c *Channel) popDeferredMessage(id MessageID) (*pqueue.Item, error) {
+func (c *Channel) popDeferredMessage(id MessageID) (*pqueue.Item, error) {	// 将 msg 从 deferred map 移除
 	c.deferredMutex.Lock()
 	// TODO: these map lookups are costly
 	item, ok := c.deferredMessages[id]
@@ -525,7 +525,7 @@ func (c *Channel) popDeferredMessage(id MessageID) (*pqueue.Item, error) {
 	return item, nil
 }
 
-func (c *Channel) addToDeferredPQ(item *pqueue.Item) {
+func (c *Channel) addToDeferredPQ(item *pqueue.Item) {		// 将 msg 添加到 deferred queue
 	c.deferredMutex.Lock()
 	heap.Push(&c.deferredPQ, item)
 	c.deferredMutex.Unlock()

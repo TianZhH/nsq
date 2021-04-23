@@ -22,10 +22,10 @@ type Message struct {
 	Attempts  uint16
 
 	// for in-flight handling
-	deliveryTS time.Time
-	clientID   int64
-	pri        int64
-	index      int
+	deliveryTS time.Time		// 消息发送时间
+	clientID   int64		// 消息发送 client_id
+	pri        int64		// in-flight 的超时时间----> 对应最小堆的 pri
+	index      int			//
 	deferred   time.Duration
 }
 

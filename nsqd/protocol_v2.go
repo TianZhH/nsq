@@ -311,7 +311,7 @@ func (p *protocolV2) messagePump(client *clientV2, startedChan chan bool) {// �
 			}
 			msg.Attempts++
 
-			subChannel.StartInFlightTimeout(msg, client.ID, msgTimeout)	// 将消息放到 in-flight 队列中
+			subChannel.StartInFlightTimeout(msg, client.ID, msgTimeout)	// 发送消息前将消息放到 in-flight 队列中
 			client.SendingMessage()	// 更新已发送 msg 的计数
 			err = p.SendMessage(client, msg)	// 真正发送消息给 client
 			if err != nil {
@@ -324,7 +324,7 @@ func (p *protocolV2) messagePump(client *clientV2, startedChan chan bool) {// �
 			}
 			msg.Attempts++
 
-			subChannel.StartInFlightTimeout(msg, client.ID, msgTimeout)	// 将消息放到 in-flight 队列中
+			subChannel.StartInFlightTimeout(msg, client.ID, msgTimeout)	// 发送消息前将消息放到 in-flight 队列中
 			client.SendingMessage()	// 更新已发送 msg 的计数
 			err = p.SendMessage(client, msg)	// 真正发送消息给 client
 			if err != nil {
@@ -699,7 +699,7 @@ func (p *protocolV2) FIN(client *clientV2, params [][]byte) ([]byte, error) {
 	return nil, nil
 }
 
-func (p *protocolV2) REQ(client *clientV2, params [][]byte) ([]byte, error) {
+func (p *protocolV2) REQ(client *clientV2, params [][]byte) ([]byte, error) {	// 重新排队
 	state := atomic.LoadInt32(&client.State)
 	if state != stateSubscribed && state != stateClosing {
 		return nil, protocol.NewFatalClientErr(nil, "E_INVALID", "cannot REQ in current state")

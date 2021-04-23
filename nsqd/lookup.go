@@ -12,7 +12,7 @@ import (
 	"github.com/TianZhH/nsq/internal/version"
 )
 
-func connectCallback(n *NSQD, hostname string) func(*lookupPeer) {// nsqd 与 nsqlookup 首次建立连接时，需要执行 callback, 注册元信息
+func connectCallback(n *NSQD, hostname string) func(*lookupPeer) {// nsqd 与 nsqlookup 首次建立连接时，需要执行 callback, 1. 通过 IDENTIFY 注册元信息 2. 向 nsplookup 注册 topic/channel 信息
 	return func(lp *lookupPeer) {
 		ci := make(map[string]interface{})	// 封装 nsqd 的元数据信息
 		ci["version"] = version.Binary
@@ -26,7 +26,7 @@ func connectCallback(n *NSQD, hostname string) func(*lookupPeer) {// nsqd 与 ns
 			lp.Close()
 			return
 		}
-		resp, err := lp.Command(cmd)	// 执行 Identify 命令
+		resp, err := lp.Command(cmd)	// 发送 Identify 命令给 nsqlookup
 		if err != nil {
 			n.logf(LOG_ERROR, "LOOKUPD(%s): %s - %s", lp, cmd, err)
 			return
@@ -116,7 +116,7 @@ func (n *NSQD) lookupLoop() {
 					n.logf(LOG_ERROR, "LOOKUPD(%s): %s - %s", lookupPeer, cmd, err)
 				}
 			}
-		case val := <-n.notifyChan: // 新建 topic / channel ，拼装 cmd 并发送给所有 nsqlookup
+		case val := <-n.notifyChan: // topic / channel 的创建和退出通过 notifyChan通知 nsqlookup
 			var cmd *nsq.Command
 			var branch string
 
@@ -141,7 +141,7 @@ func (n *NSQD) lookupLoop() {
 				}
 			}
 
-			for _, lookupPeer := range lookupPeers {
+			for _, lookupPeer := range lookupPeers {	// 循环通知 nsqlookup
 				n.logf(LOG_INFO, "LOOKUPD(%s): %s %s", lookupPeer, branch, cmd)
 				_, err := lookupPeer.Command(cmd)
 				if err != nil {

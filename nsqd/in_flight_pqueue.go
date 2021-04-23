@@ -46,7 +46,7 @@ func (pq *inFlightPqueue) Remove(i int) *Message {	// 删除某个节点
 	n := len(*pq)
 	if n-1 != i {
 		pq.Swap(i, n-1)	// 将 被移除的 节点放到最后
-		pq.down(i, n-1)	// 先向下调整 保证 i 这个位置满足最大堆
+		pq.down(i, n-1)	// 先向下调整 保证 i 这个位置满足最小堆
 		pq.up(i)	// 然后再向上调整
 	}
 	x := (*pq)[n-1]	// 将最后一个移除
@@ -71,8 +71,8 @@ func (pq *inFlightPqueue) PeekAndShift(max int64) (*Message, int64) {	// 如果�
 
 func (pq *inFlightPqueue) up(j int) {	// 向上调整堆正确性
 	for {
-		i := (j - 1) / 2 // parent	// j 作为子节点找到 j 的父节点
-		if i == j || (*pq)[j].pri >= (*pq)[i].pri {	// 如果 子节点的 pri >= 父节点的 pri 则无需交换，否则交换子节点和父节点 (交换之前父节点肯定是大于另一个子节点的，所以只关心j这个子节点和父节点i的大小关系)
+		i := (j - 1) / 2 // parent	// j 作为子节点找到 j 的父节点 i
+		if i == j || (*pq)[j].pri >= (*pq)[i].pri {	// 如果 子节点 j 的 pri >= 父节点 i 的 pri 则无需交换，否则交换子节点和父节点 (交换之前父节点肯定是小于另一个子节点的，所以只关心j这个子节点和父节点i的大小关系)
 			break
 		}
 		pq.Swap(i, j)
