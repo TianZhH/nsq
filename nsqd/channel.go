@@ -93,11 +93,11 @@ func NewChannel(topicName string, channelName string, ctx *context,
 		)
 	}
 
-	c.initPQ()
+	c.initPQ()	// 初始化 in-flight deferred chan
 
 	if strings.HasSuffix(channelName, "#ephemeral") {
 		c.ephemeral = true
-		c.backend = newDummyBackendQueue()
+		c.backend = newDummyBackendQueue()	// ephemeral channel 在 mem chan 超出长度之后直接丢弃msg 因此 backend 什么也不干
 	} else {
 		dqLogf := func(level diskqueue.LogLevel, f string, args ...interface{}) {
 			opts := ctx.nsqd.getOpts()

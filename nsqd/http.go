@@ -675,7 +675,7 @@ func (s *httpServer) printStats(stats []TopicStats, producerStats []ClientStats,
 	return buf.Bytes()
 }
 
-func (s *httpServer) doConfig(w http.ResponseWriter, req *http.Request, ps httprouter.Params) (interface{}, error) {
+func (s *httpServer) doConfig(w http.ResponseWriter, req *http.Request, ps httprouter.Params) (interface{}, error) {	// 更新或者获取 nsqlookup tcp addrs
 	opt := ps.ByName("opt")
 
 	if req.Method == "PUT" {

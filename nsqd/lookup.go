@@ -78,7 +78,7 @@ func connectCallback(n *NSQD, hostname string) func(*lookupPeer) {// nsqd 与 ns
 func (n *NSQD) lookupLoop() {
 	var lookupPeers []*lookupPeer
 	var lookupAddrs []string
-	connect := true
+	connect := true	// 是否连接 nsqlookup
 
 	hostname, err := os.Hostname()
 	if err != nil {
@@ -148,7 +148,7 @@ func (n *NSQD) lookupLoop() {
 					n.logf(LOG_ERROR, "LOOKUPD(%s): %s - %s", lookupPeer, cmd, err)
 				}
 			}
-		case <-n.optsNotificationChan:  // TODO
+		case <-n.optsNotificationChan:  // 更新 nsqlookup addrs 关闭无用连接
 			var tmpPeers []*lookupPeer
 			var tmpAddrs []string
 			for _, lp := range lookupPeers {

@@ -69,8 +69,8 @@ type NSQD struct {
 
 	poolSize int
 
-	notifyChan           chan interface{}	// channel/topic 的创建和退出 通过此chan 通知 nsqlookup
-	optsNotificationChan chan struct{}
+	notifyChan           chan interface{}	// 新建 topic/channel 时 通过 notifyChan 来通知 nsqd，从而通知给 nsqlookup
+	optsNotificationChan chan struct{}		// 客户端更新配置通过 optsNotificationChan 通知 nsqd
 	exitChan             chan int
 	waitGroup            util.WaitGroupWrapper
 
