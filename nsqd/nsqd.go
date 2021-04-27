@@ -59,7 +59,7 @@ type NSQD struct {
 	clientLock sync.RWMutex
 	clients    map[int64]Client
 
-	lookupPeers atomic.Value
+	lookupPeers atomic.Value	// []*lookupPeer
 
 	tcpServer     *tcpServer
 	tcpListener   net.Listener
@@ -275,7 +275,7 @@ func (n *NSQD) Main() error {
 	}
 
 	n.waitGroup.Wrap(n.queueScanLoop)	// 启动 goroutine 处理 in-flight/deferred 消息
-	n.waitGroup.Wrap(n.lookupLoop)		// 启动 goroutine 与 nsqlookup 建立连接, 并持续发送心跳等
+	n.waitGroup.Wrap(n.lookupLoop)		// 启动 goroutine 与 nsqlookup 建立连接, 并与 nsqlookup 通信(发送心跳，更新topic/channel信息等)
 	if n.getOpts().StatsdAddress != "" {
 		n.waitGroup.Wrap(n.statsdLoop)
 	}

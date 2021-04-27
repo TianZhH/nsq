@@ -38,9 +38,9 @@ func (p *protocolV2) IOLoop(conn net.Conn) error {	// 循环处理网络事件
 	var line []byte
 	var zeroTime time.Time
 
-	clientID := atomic.AddInt64(&p.ctx.nsqd.clientIDSequence, 1)
-	client := newClientV2(clientID, conn, p.ctx)	// 为
-	p.ctx.nsqd.AddClient(client.ID, client)
+	clientID := atomic.AddInt64(&p.ctx.nsqd.clientIDSequence, 1)	// 为client 生成 client_id
+	client := newClientV2(clientID, conn, p.ctx)
+	p.ctx.nsqd.AddClient(client.ID, client)		// 保存下 client
 
 	// synchronize the startup of messagePump in order
 	// to guarantee that it gets a chance to initialize

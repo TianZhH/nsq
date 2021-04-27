@@ -37,7 +37,7 @@ func (p *LookupProtocolV1) IOLoop(conn net.Conn) error {
 		params := strings.Split(line, " ")
 
 		var response []byte
-		response, err = p.Exec(client, reader, params)
+		response, err = p.Exec(client, reader, params)	// 执行 client 发送来的命令和参数
 		if err != nil {
 			ctx := ""
 			if parentErr := err.(protocol.ChildErr).Parent(); parentErr != nil {
@@ -199,7 +199,7 @@ func (p *LookupProtocolV1) IDENTIFY(client *ClientV1, reader *bufio.Reader, para
 	}
 
 	var bodyLen int32
-	err = binary.Read(reader, binary.BigEndian, &bodyLen)
+	err = binary.Read(reader, binary.BigEndian, &bodyLen)	// 读取 body len
 	if err != nil {
 		return nil, protocol.NewFatalClientErr(err, "E_BAD_BODY", "IDENTIFY failed to read body size")
 	}
