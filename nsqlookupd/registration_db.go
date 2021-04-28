@@ -13,8 +13,8 @@ type RegistrationDB struct {
 }
 
 type Registration struct {
-	Category string
-	Key      string
+	Category string		// 注册类型 比如 "topic"
+	Key      string		// 注册的对象名	topic name
 	SubKey   string
 }
 type Registrations []Registration
@@ -133,7 +133,7 @@ func (r *RegistrationDB) FindRegistrations(category string, key string, subkey s
 	return results
 }
 
-func (r *RegistrationDB) FindProducers(category string, key string, subkey string) Producers {
+func (r *RegistrationDB) FindProducers(category string, key string, subkey string) Producers {	// 根据 key 获取 producers
 	r.RLock()
 	defer r.RUnlock()
 	if !r.needFilter(key, subkey) {

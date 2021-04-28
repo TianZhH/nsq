@@ -144,7 +144,7 @@ func (s *httpServer) doCreateTopic(w http.ResponseWriter, req *http.Request, ps 
 
 	s.ctx.nsqlookupd.logf(LOG_INFO, "DB: adding topic(%s)", topicName)
 	key := Registration{"topic", topicName, ""}
-	s.ctx.nsqlookupd.DB.AddRegistration(key)
+	s.ctx.nsqlookupd.DB.AddRegistration(key)	// 添加注册的 key
 
 	return nil, nil
 }
