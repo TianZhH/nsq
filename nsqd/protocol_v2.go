@@ -212,7 +212,7 @@ func (p *protocolV2) messagePump(client *clientV2, startedChan chan bool) {// �
 
 	subEventChan := client.SubEventChan		// 在 protocolV2.Exec() 方法中处理 SUB 指令时，可知 SubEventChan 指向的是 该 client 订阅的 channel
 	identifyEventChan := client.IdentifyEventChan		// 在 protocolV2.Exec() 方法中处理 IDENTIFY 指令时，可知 IDENTIFY 处理时会将新的 client 元信息投递到此 chan
-	outputBufferTicker := time.NewTicker(client.OutputBufferTimeout)	// IDENTIFY 指令会更新此值，否则使用nsq配置( nsqd.getOpts().OutputBufferTimeout)  nsqd 发送消息到 client 的超时时间
+	outputBufferTicker := time.NewTicker(client.OutputBufferTimeout)	// IDENTIFY 指令会更新此值，否则使用 nsq 配置( nsqd.getOpts().OutputBufferTimeout)  nsqd 发送消息到 client 的超时时间
 	heartbeatTicker := time.NewTicker(client.HeartbeatInterval)	// 同上
 	heartbeatChan := heartbeatTicker.C
 	msgTimeout := client.MsgTimeout		// 同 heartbeat 配置
@@ -295,7 +295,7 @@ func (p *protocolV2) messagePump(client *clientV2, startedChan chan bool) {// �
 
 			msgTimeout = identifyData.MsgTimeout
 		case <-heartbeatChan:	// 发送心跳消息
-			err = p.Send(client, frameTypeResponse, heartbeatBytes)
+			err = p.Send(client, frameTypeResponse, heartbeatBytes)	// frameTypeResponse 类型消息直接 刷新写缓冲返回给客户端
 			if err != nil {
 				goto exit
 			}
@@ -313,7 +313,7 @@ func (p *protocolV2) messagePump(client *clientV2, startedChan chan bool) {// �
 
 			subChannel.StartInFlightTimeout(msg, client.ID, msgTimeout)	// 发送消息前将消息放到 in-flight 队列中
 			client.SendingMessage()	// 更新已发送 msg 的计数
-			err = p.SendMessage(client, msg)	// 真正发送消息给 client
+			err = p.SendMessage(client, msg)	// 将消息写入缓冲区
 			if err != nil {
 				goto exit
 			}
@@ -863,7 +863,7 @@ func (p *protocolV2) MPUB(client *clientV2, params [][]byte) ([]byte, error) {
 	return okBytes, nil
 }
 
-func (p *protocolV2) DPUB(client *clientV2, params [][]byte) ([]byte, error) {
+func (p *protocolV2) DPUB(client *clientV2, params [][]byte) ([]byte, error) {	// 发布一个消息到 deferred 队列
 	var err error
 
 	if len(params) < 3 {
